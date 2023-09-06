@@ -1,9 +1,47 @@
 package com.bstirbat.difftool;
 
+import static com.bstirbat.difftool.utils.AssertUtils.assertListsEquals;
+
 import com.bstirbat.difftool.annotations.AuditKey;
 import java.util.List;
+import org.junit.jupiter.api.Test;
 
 class DiffToolWithNestedLevelListsTest {
+
+  @Test
+  void detectFieldChange() throws Exception {
+    ClassB previousV1 = new ClassB();
+    previousV1.setKey("v_1");
+    previousV1.setDisplayName("My Car");
+
+    ClassB previousV2 = new ClassB();
+    previousV2.setKey("v_2");
+    previousV2.setDisplayName("Ford");
+
+    ClassA previous = new ClassA();
+    previous.setFirstName("James");
+    previous.setLastName("Last");
+    previous.setAge(25);
+    previous.setVehicles(List.of(previousV1, previousV2));
+
+
+    ClassB currentV1 = new ClassB();
+    currentV1.setKey("v_1");
+    currentV1.setDisplayName("123 Ferrari");
+
+    ClassB currentV2 = new ClassB();
+    currentV2.setKey("v_2");
+    currentV2.setDisplayName("Ford");
+
+    ClassA current = new ClassA();
+    current.setFirstName("James");
+    current.setLastName("Last");
+    current.setAge(25);
+    current.setVehicles(List.of(currentV1, currentV2));
+
+    PropertyUpdate expectedChange = new PropertyUpdate("vehicles[v_1].displayName", "My Car", "123 Ferrari");
+    assertListsEquals(DiffTool.diff(previous, current), List.of(expectedChange));
+  }
 
 
   static class ClassA {

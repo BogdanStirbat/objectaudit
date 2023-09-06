@@ -92,7 +92,7 @@ public class DiffTool {
 
           for (Object currentListItem: currentListItems) {
             String key = obtainKey(currentListItem);
-            String prefix = String.format("%s[%s]", property, key);
+            String prefix = String.format("%s[%s].", property, key);
             result.addAll(appendPrefix(prefix, diff(null, currentListItem)));
           }
           continue;
@@ -157,7 +157,7 @@ public class DiffTool {
           for (String previousKey : previousObjects.keySet()) {
             if (!currentObjects.containsKey(previousKey)) {
               Object previousListItem = previousObjects.get(previousKey);
-              String prefix = String.format("%s[%s]", property, previousKey);
+              String prefix = String.format("%s[%s].", property, previousKey);
               result.addAll(appendPrefix(prefix, diff(previousListItem, null)));
             }
           }
@@ -165,7 +165,7 @@ public class DiffTool {
           for (String currentKey: currentObjects.keySet()) {
             if (!previousObjects.containsKey(currentKey)) {
               Object currentListItem = currentObjects.get(currentKey);
-              String prefix = String.format("%s[%s]", property, currentKey);
+              String prefix = String.format("%s[%s].", property, currentKey);
               result.addAll(appendPrefix(prefix, diff(null, currentListItem)));
             }
           }
@@ -175,7 +175,7 @@ public class DiffTool {
               Object previousListItem = previousObjects.get(key);
               Object currentListItem = currentObjects.get(key);
               if (!previousListItem.equals(currentListItem)) {
-                String prefix = String.format("%s[%s]", property, key);
+                String prefix = String.format("%s[%s].", property, key);
                 result.addAll(appendPrefix(prefix, diff(previousListItem, currentListItem)));
               }
             }
