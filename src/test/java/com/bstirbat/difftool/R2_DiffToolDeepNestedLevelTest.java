@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class DiffToolDeepNestedLevelTest {
+class R2_DiffToolDeepNestedLevelTest {
 
   @Test
   void detectFieldChange() throws Exception {

@@ -8,7 +8,7 @@ import com.bstirbat.difftool.exception.MissingAuditInfoException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class DiffToolWithNestedLevelListsTest {
+class R4_DiffToolWithObjectsInListsTest {
 
   @Test
   void detectFieldChange() throws Exception {
@@ -333,7 +333,7 @@ class DiffToolWithNestedLevelListsTest {
   }
 
   @Test
-  void detectFieldChange_whenNoAuditInfoExists() throws Exception {
+  void detectFieldChange_whenNoAuditInfoExists() {
     ClassA previous = new ClassA();
     previous.setFirstName("James");
     previous.setLastName("Last");

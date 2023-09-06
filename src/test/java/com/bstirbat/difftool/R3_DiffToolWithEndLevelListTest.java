@@ -5,7 +5,7 @@ import static com.bstirbat.difftool.utils.AssertUtils.assertListsEquals;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class DiffToolWithTopLevelListsTest {
+class R3_DiffToolWithEndLevelListTest {
 
   @Test
   void detectFieldChange() throws Exception {
