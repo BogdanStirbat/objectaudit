@@ -59,7 +59,7 @@ public class DiffTool {
           for (Object previousListItem: previousListItems) {
 
             String key = obtainKey(previousListItem);
-            String prefix = String.format("%s[%s]", property, key);
+            String prefix = String.format("%s[%s].", property, key);
             result.addAll(appendPrefix(prefix, diff(previousListItem, null)));
           }
           continue;
