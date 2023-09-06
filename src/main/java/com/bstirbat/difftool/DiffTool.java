@@ -1,8 +1,8 @@
 package com.bstirbat.difftool;
 
 import static com.bstirbat.difftool.utils.ObjectUtils.isCollection;
-import static com.bstirbat.difftool.utils.ObjectUtils.isCollectionOfEndLevelType;
-import static com.bstirbat.difftool.utils.ObjectUtils.isEndLevelType;
+import static com.bstirbat.difftool.utils.ObjectUtils.isCollectionOfEndLevelObjects;
+import static com.bstirbat.difftool.utils.ObjectUtils.isEndLevelObject;
 import static com.bstirbat.difftool.utils.ObjectUtils.obtainKey;
 
 import java.lang.reflect.Field;
@@ -38,12 +38,12 @@ public class DiffTool {
       }
 
       if (previous != null && current == null) {
-        if (isEndLevelType(previous)) {
+        if (isEndLevelObject(previous)) {
           result.add(new PropertyUpdate(property, previous.toString(), null));
           continue;
         }
 
-        if (isCollectionOfEndLevelType(previous)) {
+        if (isCollectionOfEndLevelObjects(previous)) {
           Collection<Object> previousListItems = (Collection<Object>) previous;
           List<String> removedValues = previousListItems.stream()
               .map(Object::toString)
@@ -69,12 +69,12 @@ public class DiffTool {
       }
 
       if (previous == null && current != null) {
-        if (isEndLevelType(current)) {
+        if (isEndLevelObject(current)) {
           result.add(new PropertyUpdate(property, null, current.toString()));
           continue;
         }
 
-        if (isCollectionOfEndLevelType(current)) {
+        if (isCollectionOfEndLevelObjects(current)) {
           Collection<Object> currentListItems = (Collection<Object>) current;
           List<String> addedValues = currentListItems.stream()
               .map(Object::toString)
@@ -99,12 +99,12 @@ public class DiffTool {
       }
 
       if (previous != null && current != null && !previous.equals(current)) {
-        if (isEndLevelType(previous)) {
+        if (isEndLevelObject(previous)) {
           result.add(new PropertyUpdate(property, previous.toString(), current.toString()));
           continue;
         }
 
-        if (isCollectionOfEndLevelType(previous) || isCollectionOfEndLevelType(current)) {
+        if (isCollectionOfEndLevelObjects(previous) || isCollectionOfEndLevelObjects(current)) {
           Collection<Object> previousListItems = (Collection<Object>) previous;
           Collection<Object> currentListItems = (Collection<Object>) current;
 

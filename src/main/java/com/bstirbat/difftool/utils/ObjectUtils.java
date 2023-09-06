@@ -13,7 +13,7 @@ public class ObjectUtils {
 
   }
 
-  public static boolean isEndLevelType(Object obj) {
+  public static boolean isEndLevelObject(Object obj) {
     if (obj == null) {
       return true;
     }
@@ -43,7 +43,7 @@ public class ObjectUtils {
     return obj instanceof Collection<?>;
   }
 
-  public static boolean isCollectionOfEndLevelType(Object obj) {
+  public static boolean isCollectionOfEndLevelObjects(Object obj) {
     if (!isCollection(obj)) {
       return false;
     }
@@ -51,7 +51,7 @@ public class ObjectUtils {
     Collection<Object> listItems = (Collection<Object>) obj;
     if (!listItems.isEmpty()) {
       Object testObject = listItems.toArray()[0];
-      if (isEndLevelType(testObject)) {
+      if (isEndLevelObject(testObject)) {
         return true;
       }
     }
