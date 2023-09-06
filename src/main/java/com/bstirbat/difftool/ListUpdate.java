@@ -1,29 +1,30 @@
 package com.bstirbat.difftool;
 
+import java.util.List;
 import java.util.Objects;
 
 public final class ListUpdate implements ChangeType {
 
   private final String property;
-  private final String previous;
-  private final String current;
+  private final List<String> added;
+  private final List<String> removed;
 
-  public ListUpdate(String property, String previous, String current) {
+  public ListUpdate(String property, List<String> added, List<String> removed) {
     this.property = property;
-    this.previous = previous;
-    this.current = current;
+    this.added = added;
+    this.removed = removed;
   }
 
   public String getProperty() {
     return property;
   }
 
-  public String getPrevious() {
-    return previous;
+  public List<String> getAdded() {
+    return added;
   }
 
-  public String getCurrent() {
-    return current;
+  public List<String> getRemoved() {
+    return removed;
   }
 
   @Override
@@ -35,12 +36,12 @@ public final class ListUpdate implements ChangeType {
       return false;
     }
     ListUpdate that = (ListUpdate) o;
-    return Objects.equals(property, that.property) && Objects.equals(previous, that.previous)
-        && Objects.equals(current, that.current);
+    return Objects.equals(property, that.property) && Objects.equals(added, that.added)
+        && Objects.equals(removed, that.removed);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(property, previous, current);
+    return Objects.hash(property, added, removed);
   }
 }

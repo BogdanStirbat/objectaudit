@@ -10,7 +10,7 @@ public class AssertUtils {
 
   }
 
-  public static <T> void assertListsEquals(List<T> expected, List<T> actual) {
+  public static <T> void assertListsEquals(List<T> actual, List<T> expected) {
 
     assertTrue(expected.size() == actual.size() && expected.containsAll(actual) && actual.containsAll(expected));
   }
