@@ -2,7 +2,7 @@ package com.bstirbat.difftool;
 
 import java.util.Objects;
 
-public class PropertyUpdate implements ChangeType {
+public final class PropertyUpdate implements ChangeType {
 
   private final String property;
   private final String previous;

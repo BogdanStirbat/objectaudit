@@ -1,6 +1,9 @@
 package com.bstirbat.difftool;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,22 +33,76 @@ public class DiffTool {
       }
 
       if (previous != null && current == null) {
-        result.add(new PropertyUpdate(property, previous.toString(), null));
+
+        if (isEndLevelType(previous)) {
+          result.add(new PropertyUpdate(property, previous.toString(), null));
+        } else {
+          result.addAll(appendPrefix(property + ".", diff(previous, null)));
+        }
+
         continue;
       }
 
       if (previous == null && current != null) {
-        result.add(new PropertyUpdate(property, null, current.toString()));
+
+        if (isEndLevelType(current)) {
+          result.add(new PropertyUpdate(property, null, current.toString()));
+        } else {
+          result.addAll(appendPrefix(property + ".", diff(null, current)));
+        }
+
         continue;
       }
 
-      if (previous != null && current != null) {
-        if (!previous.equals(current)) {
+      if (previous != null && current != null && !previous.equals(current)) {
+        if (isEndLevelType(previous)) {
           result.add(new PropertyUpdate(property, previous.toString(), current.toString()));
+        } else {
+          result.addAll(appendPrefix(property + ".", diff(previous, current)));
         }
       }
     }
 
     return result;
+  }
+
+  private static List<ChangeType> appendPrefix(String prefix, List<ChangeType> changeTypes) {
+    return changeTypes.stream()
+        .map(changeType -> appendPrefix(prefix, changeType))
+        .toList();
+  }
+
+  private static ChangeType appendPrefix(String prefix, ChangeType changeType) {
+    if (changeType instanceof PropertyUpdate propertyUpdate) {
+      return new PropertyUpdate(prefix + propertyUpdate.getProperty(), propertyUpdate.getPrevious(), propertyUpdate.getCurrent());
+    }
+    if (changeType instanceof ListUpdate listUpdate) {
+      return new ListUpdate(prefix + listUpdate.getProperty(), listUpdate.getPrevious(), listUpdate.getCurrent());
+    }
+
+    // Sealed classes, typed based pattern matching for switch are preview features in Java 17
+    throw new RuntimeException("Unimplemented case");
+  }
+
+  private static boolean isEndLevelType(Object obj) {
+    if (obj == null) {
+      return true;
+    }
+
+    Class<?> clazz = obj.getClass();
+    if (clazz.isPrimitive() || clazz.isEnum()) {
+      return true;
+    }
+
+    if (obj instanceof Number ||
+        obj instanceof Character ||
+        obj instanceof Boolean ||
+        obj instanceof String ||
+        obj instanceof LocalDate ||
+        obj instanceof LocalDateTime) {
+      return true;
+    }
+
+    return false;
   }
 }
