@@ -9,76 +9,77 @@ class R1_DiffToolTopLevelTest {
 
   @Test
   void detectFieldChange() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("Jim");
-    current.setLastName("Last");
-    current.setAge(25);
+    ClassA current = ClassA.builder()
+        .withFirstName("Jim")
+        .withLastName("Last")
+        .withAge(25)
+        .build();
 
-    PropertyUpdate expectedChange = new PropertyUpdate("firstName", "James", "Jim");
-
-    assertListsEquals(DiffTool.diff(previous, current), List.of(expectedChange));
+    assertListsEquals(DiffTool.diff(previous, current), List.of(new PropertyUpdate("firstName", "James", "Jim")));
   }
 
   @Test
   void detectFieldChange_whenIntegerValue() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(24);
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(24)
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .build();
 
-    PropertyUpdate expectedChange = new PropertyUpdate("age", "24", "25");
-
-    assertListsEquals(DiffTool.diff(previous, current), List.of(expectedChange));
+    assertListsEquals(DiffTool.diff(previous, current), List.of(new PropertyUpdate("age", "24", "25")));
   }
 
   @Test
   void detectFieldChange_whenValueAdded() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setLastName("Last");
-    previous.setAge(24);
+    ClassA previous = ClassA.builder()
+        .withLastName("Last")
+        .withAge(24)
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(24);
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(24)
+        .build();
 
-    PropertyUpdate expectedChange = new PropertyUpdate("firstName", null, "James");
-
-    assertListsEquals(DiffTool.diff(previous, current), List.of(expectedChange));
+    assertListsEquals(DiffTool.diff(previous, current), List.of(new PropertyUpdate("firstName", null, "James")));
   }
 
   @Test
   void detectFieldChange_whenValueRemoved() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(24);
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(24)
+        .build();
 
-    ClassA current = new ClassA();
-    current.setLastName("Last");
-    current.setAge(24);
+    ClassA current = ClassA.builder()
+        .withLastName("Last")
+        .withAge(24)
+        .build();
 
-    PropertyUpdate expectedChange = new PropertyUpdate("firstName","James", null);
-
-    assertListsEquals(DiffTool.diff(previous, current), List.of(expectedChange));
+    assertListsEquals(DiffTool.diff(previous, current), List.of(new PropertyUpdate("firstName","James", null)));
   }
 
   @Test
   void detectFieldChange_whenNoChange() throws Exception {
-    ClassA objectWithoutChanges = new ClassA();
-    objectWithoutChanges.setFirstName("James");
-    objectWithoutChanges.setLastName("Last");
-    objectWithoutChanges.setAge(24);
+    ClassA objectWithoutChanges = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(24)
+        .build();
 
     assertListsEquals(DiffTool.diff(objectWithoutChanges, objectWithoutChanges), List.of());
   }
@@ -93,10 +94,11 @@ class R1_DiffToolTopLevelTest {
   void detectFieldChange_whenMultipleChanges() throws Exception {
     ClassA previous = new ClassA();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(24);
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(24)
+        .build();
 
     PropertyUpdate expectedChange1 = new PropertyUpdate("firstName",null, "James");
     PropertyUpdate expectedChange2 = new PropertyUpdate("lastName",null, "Last");
@@ -107,10 +109,11 @@ class R1_DiffToolTopLevelTest {
 
   @Test
   void detectFieldChange_whenPreviousIsNull() throws Exception {
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(24);
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(24)
+        .build();
 
     PropertyUpdate expectedChange1 = new PropertyUpdate("firstName",null, "James");
     PropertyUpdate expectedChange2 = new PropertyUpdate("lastName",null, "Last");
@@ -121,10 +124,11 @@ class R1_DiffToolTopLevelTest {
 
   @Test
   void detectFieldChange_whenCurrentIsNull() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(24);
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(24)
+        .build();
 
     PropertyUpdate expectedChange1 = new PropertyUpdate("firstName", "James", null);
     PropertyUpdate expectedChange2 = new PropertyUpdate("lastName", "Last", null);
@@ -143,6 +147,16 @@ class R1_DiffToolTopLevelTest {
     private String firstName;
     private String lastName;
     private Integer age;
+
+    public ClassA() {
+
+    }
+
+    private ClassA(ClassABuilder builder) {
+      this.firstName = builder.firstName;
+      this.lastName = builder.lastName;
+      this.age = builder.age;
+    }
 
     public String getFirstName() {
       return firstName;
@@ -166,6 +180,37 @@ class R1_DiffToolTopLevelTest {
 
     public void setAge(Integer age) {
       this.age = age;
+    }
+
+    public static ClassABuilder builder() {
+      return new ClassABuilder();
+    }
+
+    public static class ClassABuilder {
+      private String firstName;
+      private String lastName;
+      private Integer age;
+
+      private ClassABuilder() {
+
+      }
+
+      public ClassABuilder withFirstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+      }
+      public ClassABuilder withLastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+      }
+      public ClassABuilder withAge(Integer age) {
+        this.age = age;
+        return this;
+      }
+
+      public ClassA build() {
+        return new ClassA(this);
+      }
     }
   }
 }

@@ -12,34 +12,40 @@ class R4_DiffToolWithObjectsInListsTest {
 
   @Test
   void detectFieldChange() throws Exception {
-    ClassB previousV1 = new ClassB();
-    previousV1.setKey("v_1");
-    previousV1.setDisplayName("My Car");
+    ClassB previousV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("My Car")
+        .build();
 
-    ClassB previousV2 = new ClassB();
-    previousV2.setKey("v_2");
-    previousV2.setDisplayName("Ford");
+    ClassB previousV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
 
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setVehicles(List.of(previousV1, previousV2));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(previousV1, previousV2))
+        .build();
 
 
-    ClassB currentV1 = new ClassB();
-    currentV1.setKey("v_1");
-    currentV1.setDisplayName("123 Ferrari");
+    ClassB currentV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("123 Ferrari")
+        .build();
 
-    ClassB currentV2 = new ClassB();
-    currentV2.setKey("v_2");
-    currentV2.setDisplayName("Ford");
+    ClassB currentV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setVehicles(List.of(currentV1, currentV2));
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(currentV1, currentV2))
+        .build();
 
     PropertyUpdate expectedChange = new PropertyUpdate("vehicles[v_1].displayName", "My Car", "123 Ferrari");
     assertListsEquals(DiffTool.diff(previous, current), List.of(expectedChange));
@@ -47,25 +53,29 @@ class R4_DiffToolWithObjectsInListsTest {
 
   @Test
   void detectFieldChange_whenPropertyInListAdded() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .build();
 
 
-    ClassB currentV1 = new ClassB();
-    currentV1.setKey("v_1");
-    currentV1.setDisplayName("123 Ferrari");
+    ClassB currentV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("123 Ferrari")
+        .build();
 
-    ClassB currentV2 = new ClassB();
-    currentV2.setKey("v_2");
-    currentV2.setDisplayName("Ford");
+    ClassB currentV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setVehicles(List.of(currentV1, currentV2));
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(currentV1, currentV2))
+        .build();
 
     PropertyUpdate expectedChange1 = new PropertyUpdate("vehicles[v_1].displayName", null, "123 Ferrari");
     PropertyUpdate expectedChange2 = new PropertyUpdate("vehicles[v_1].key", null, "v_1");
@@ -76,25 +86,29 @@ class R4_DiffToolWithObjectsInListsTest {
 
   @Test
   void detectFieldChange_whenPropertyInListRemoved() throws Exception {
-    ClassB previousV1 = new ClassB();
-    previousV1.setKey("v_1");
-    previousV1.setDisplayName("My Car");
+    ClassB previousV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("My Car")
+        .build();
 
-    ClassB previousV2 = new ClassB();
-    previousV2.setKey("v_2");
-    previousV2.setDisplayName("Ford");
+    ClassB previousV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
 
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setVehicles(List.of(previousV1, previousV2));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(previousV1, previousV2))
+        .build();
 
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .build();
 
     PropertyUpdate expectedChange1 = new PropertyUpdate("vehicles[v_1].displayName", "My Car", null);
     PropertyUpdate expectedChange2 = new PropertyUpdate("vehicles[v_1].key", "v_1", null);
@@ -105,56 +119,66 @@ class R4_DiffToolWithObjectsInListsTest {
 
   @Test
   void detectFieldChange_whenDeepLevelChangeInList() throws Exception {
-    ClassC previousKid1 = new ClassC();
-    previousKid1.setId(1L);
-    previousKid1.setName("Name 1");
-    previousKid1.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Sport")));
+    ClassC previousKid1 = ClassC.builder()
+        .withId(1L)
+        .withName("Name 1")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Sport")))
+        .build();
 
-    ClassC previousKid2 = new ClassC();
-    previousKid2.setId(2L);
-    previousKid2.setName("Name 2");
-    previousKid2.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")));
+    ClassC previousKid2 = ClassC.builder()
+        .withId(2L)
+        .withName("Name 2")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")))
+        .build();
 
-    ClassB previousV1 = new ClassB();
-    previousV1.setKey("v_1");
-    previousV1.setDisplayName("My Car");
+    ClassB previousV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("My Car")
+        .build();
 
-    ClassB previousV2 = new ClassB();
-    previousV2.setKey("v_2");
-    previousV2.setDisplayName("Ford");
+    ClassB previousV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
 
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setVehicles(List.of(previousV1, previousV2));
-    previous.setKids(List.of(previousKid1, previousKid2));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(previousV1, previousV2))
+        .withKids(List.of(previousKid1, previousKid2))
+        .build();
 
 
-    ClassC currentKid1 = new ClassC();
-    currentKid1.setId(1L);
-    currentKid1.setName("Name 1");
-    currentKid1.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Soccer")));
+    ClassC currentKid1 = ClassC.builder()
+        .withId(1L)
+        .withName("Name 1")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Soccer")))
+        .build();
 
-    ClassC currentKid2 = new ClassC();
-    currentKid2.setId(2L);
-    currentKid2.setName("Name 2");
-    currentKid2.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")));
+    ClassC currentKid2 = ClassC.builder()
+        .withId(2L)
+        .withName("Name 2")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")))
+        .build();
 
-    ClassB currentV1 = new ClassB();
-    currentV1.setKey("v_1");
-    currentV1.setDisplayName("My Car");
+    ClassB currentV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("My Car")
+        .build();
 
-    ClassB currentV2 = new ClassB();
-    currentV2.setKey("v_2");
-    currentV2.setDisplayName("Ford");
-
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setVehicles(List.of(currentV1, currentV2));
-    current.setKids(List.of(currentKid1, currentKid2));
+    ClassB currentV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
+    
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(currentV1, currentV2))
+        .withKids(List.of(currentKid1, currentKid2))
+        .build();
 
     PropertyUpdate expectedChange = new PropertyUpdate("kids[1].favoriteSubjects[s2].name", "Sport", "Soccer");
     assertListsEquals(DiffTool.diff(previous, current), List.of(expectedChange));
@@ -162,56 +186,66 @@ class R4_DiffToolWithObjectsInListsTest {
 
   @Test
   void detectFieldChange_whenItemAddedToDeepLevelList() throws Exception {
-    ClassC previousKid1 = new ClassC();
-    previousKid1.setId(1L);
-    previousKid1.setName("Name 1");
-    previousKid1.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Soccer")));
+    ClassC previousKid1 = ClassC.builder()
+        .withId(1L)
+        .withName("Name 1")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Soccer")))
+        .build();
 
-    ClassC previousKid2 = new ClassC();
-    previousKid2.setId(2L);
-    previousKid2.setName("Name 2");
-    previousKid2.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")));
+    ClassC previousKid2 = ClassC.builder()
+        .withId(2L)
+        .withName("Name 2")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")))
+        .build();
 
-    ClassB previousV1 = new ClassB();
-    previousV1.setKey("v_1");
-    previousV1.setDisplayName("My Car");
+    ClassB previousV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("My Car")
+        .build();
 
-    ClassB previousV2 = new ClassB();
-    previousV2.setKey("v_2");
-    previousV2.setDisplayName("Ford");
+    ClassB previousV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
 
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setVehicles(List.of(previousV1, previousV2));
-    previous.setKids(List.of(previousKid1, previousKid2));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(previousV1, previousV2))
+        .withKids(List.of(previousKid1, previousKid2))
+        .build();
 
 
-    ClassC currentKid1 = new ClassC();
-    currentKid1.setId(1L);
-    currentKid1.setName("Name 1");
-    currentKid1.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Soccer"), new ClassD("s3", "Programming")));
+    ClassC currentKid1 = ClassC.builder()
+        .withId(1L)
+        .withName("Name 1")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Soccer"), new ClassD("s3", "Programming")))
+        .build();
 
-    ClassC currentKid2 = new ClassC();
-    currentKid2.setId(2L);
-    currentKid2.setName("Name 2");
-    currentKid2.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")));
+    ClassC currentKid2 = ClassC.builder()
+        .withId(2L)
+        .withName("Name 2")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")))
+        .build();
 
-    ClassB currentV1 = new ClassB();
-    currentV1.setKey("v_1");
-    currentV1.setDisplayName("My Car");
+    ClassB currentV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("My Car")
+        .build();
 
-    ClassB currentV2 = new ClassB();
-    currentV2.setKey("v_2");
-    currentV2.setDisplayName("Ford");
+    ClassB currentV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setVehicles(List.of(currentV1, currentV2));
-    current.setKids(List.of(currentKid1, currentKid2));
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(currentV1, currentV2))
+        .withKids(List.of(currentKid1, currentKid2))
+        .build();
 
     PropertyUpdate expectedChange1 = new PropertyUpdate("kids[1].favoriteSubjects[s3].name", null, "Programming");
     PropertyUpdate expectedChange2 = new PropertyUpdate("kids[1].favoriteSubjects[s3].id", null, "s3");
@@ -220,56 +254,66 @@ class R4_DiffToolWithObjectsInListsTest {
 
   @Test
   void detectFieldChange_whenItemRemovedInDeepLevelList() throws Exception {
-    ClassC previousKid1 = new ClassC();
-    previousKid1.setId(1L);
-    previousKid1.setName("Name 1");
-    previousKid1.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Sport")));
+    ClassC previousKid1 = ClassC.builder()
+        .withId(1L)
+        .withName("Name 1")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Sport")))
+        .build();
 
-    ClassC previousKid2 = new ClassC();
-    previousKid2.setId(2L);
-    previousKid2.setName("Name 2");
-    previousKid2.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")));
+    ClassC previousKid2 = ClassC.builder()
+        .withId(2L)
+        .withName("Name 2")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")))
+        .build();
 
-    ClassB previousV1 = new ClassB();
-    previousV1.setKey("v_1");
-    previousV1.setDisplayName("My Car");
+    ClassB previousV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("My Car")
+        .build();
 
-    ClassB previousV2 = new ClassB();
-    previousV2.setKey("v_2");
-    previousV2.setDisplayName("Ford");
+    ClassB previousV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
 
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setVehicles(List.of(previousV1, previousV2));
-    previous.setKids(List.of(previousKid1, previousKid2));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(previousV1, previousV2))
+        .withKids(List.of(previousKid1, previousKid2))
+        .build();
 
 
-    ClassC currentKid1 = new ClassC();
-    currentKid1.setId(1L);
-    currentKid1.setName("Name 1");
-    currentKid1.setFavoriteSubjects(List.of(new ClassD("s1", "Math")));
+    ClassC currentKid1 = ClassC.builder()
+        .withId(1L)
+        .withName("Name 1")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math")))
+        .build();
 
-    ClassC currentKid2 = new ClassC();
-    currentKid2.setId(2L);
-    currentKid2.setName("Name 2");
-    currentKid2.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")));
+    ClassC currentKid2 = ClassC.builder()
+        .withId(2L)
+        .withName("Name 2")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")))
+        .build();
 
-    ClassB currentV1 = new ClassB();
-    currentV1.setKey("v_1");
-    currentV1.setDisplayName("My Car");
+    ClassB currentV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("My Car")
+        .build();
 
-    ClassB currentV2 = new ClassB();
-    currentV2.setKey("v_2");
-    currentV2.setDisplayName("Ford");
+    ClassB currentV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setVehicles(List.of(currentV1, currentV2));
-    current.setKids(List.of(currentKid1, currentKid2));
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(currentV1, currentV2))
+        .withKids(List.of(currentKid1, currentKid2))
+        .build();
 
     PropertyUpdate expectedChange1 = new PropertyUpdate("kids[1].favoriteSubjects[s2].id", "s2", null);
     PropertyUpdate expectedChange2 = new PropertyUpdate("kids[1].favoriteSubjects[s2].name", "Sport", null);
@@ -278,73 +322,85 @@ class R4_DiffToolWithObjectsInListsTest {
 
   @Test
   void detectFieldChange_whenNoObjectChange() throws Exception {
-    ClassC previousKid1 = new ClassC();
-    previousKid1.setId(1L);
-    previousKid1.setName("Name 1");
-    previousKid1.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Soccer")));
+    ClassC previousKid1 = ClassC.builder()
+        .withId(1L)
+        .withName("Name 1")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Soccer")))
+        .build();
 
-    ClassC previousKid2 = new ClassC();
-    previousKid2.setId(2L);
-    previousKid2.setName("Name 2");
-    previousKid2.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")));
+    ClassC previousKid2 = ClassC.builder()
+        .withId(2L)
+        .withName("Name 2")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")))
+        .build();
 
-    ClassB previousV1 = new ClassB();
-    previousV1.setKey("v_1");
-    previousV1.setDisplayName("My Car");
+    ClassB previousV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("My Car")
+        .build();
 
-    ClassB previousV2 = new ClassB();
-    previousV2.setKey("v_2");
-    previousV2.setDisplayName("Ford");
+    ClassB previousV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
 
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setVehicles(List.of(previousV1, previousV2));
-    previous.setKids(List.of(previousKid1, previousKid2));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(previousV1, previousV2))
+        .withKids(List.of(previousKid1, previousKid2))
+        .build();
 
 
-    ClassC currentKid1 = new ClassC();
-    currentKid1.setId(1L);
-    currentKid1.setName("Name 1");
-    currentKid1.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Soccer")));
+    ClassC currentKid1 = ClassC.builder()
+        .withId(1L)
+        .withName("Name 1")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Soccer")))
+        .build();
 
-    ClassC currentKid2 = new ClassC();
-    currentKid2.setId(2L);
-    currentKid2.setName("Name 2");
-    currentKid2.setFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")));
+    ClassC currentKid2 = ClassC.builder()
+        .withId(2L)
+        .withName("Name 2")
+        .withFavoriteSubjects(List.of(new ClassD("s1", "Math"), new ClassD("s2", "Biology")))
+        .build();
 
-    ClassB currentV1 = new ClassB();
-    currentV1.setKey("v_1");
-    currentV1.setDisplayName("My Car");
+    ClassB currentV1 = ClassB.builder()
+        .withKey("v_1")
+        .withDisplayName("My Car")
+        .build();
 
-    ClassB currentV2 = new ClassB();
-    currentV2.setKey("v_2");
-    currentV2.setDisplayName("Ford");
+    ClassB currentV2 = ClassB.builder()
+        .withKey("v_2")
+        .withDisplayName("Ford")
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setVehicles(List.of(currentV1, currentV2));
-    current.setKids(List.of(currentKid1, currentKid2));
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withVehicles(List.of(currentV1, currentV2))
+        .withKids(List.of(currentKid1, currentKid2))
+        .build();
 
     assertListsEquals(DiffTool.diff(previous, current), List.of());
   }
 
   @Test
   void detectFieldChange_whenNoAuditInfoExists() {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setSpaceShips(List.of(new ClassE("k1", "Enterprise")));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withSpaceShips(List.of(new ClassE("k1", "Enterprise")))
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setSpaceShips(List.of(new ClassE("k1", "Borg")));
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withSpaceShips(List.of(new ClassE("k1", "Borg")))
+        .build();
 
     assertThrows(MissingAuditInfoException.class, () -> DiffTool.diff(previous, current));
   }
@@ -356,6 +412,19 @@ class R4_DiffToolWithObjectsInListsTest {
     private List<ClassB> vehicles;
     private List<ClassC> kids;
     private List<ClassE> spaceShips;
+
+    public ClassA() {
+
+    }
+
+    private ClassA(ClassABuilder builder) {
+      this.firstName = builder.firstName;
+      this.lastName = builder.lastName;
+      this.age = builder.age;
+      this.vehicles = builder.vehicles;
+      this.kids = builder.kids;
+      this.spaceShips = builder.spaceShips;
+    }
 
     public String getFirstName() {
       return firstName;
@@ -404,12 +473,67 @@ class R4_DiffToolWithObjectsInListsTest {
     public void setSpaceShips(List<ClassE> spaceShips) {
       this.spaceShips = spaceShips;
     }
+
+    public static ClassABuilder builder() {
+      return new ClassABuilder();
+    }
+
+    public static class ClassABuilder {
+      private String firstName;
+      private String lastName;
+      private Integer age;
+      private List<ClassB> vehicles;
+      private List<ClassC> kids;
+      private List<ClassE> spaceShips;
+
+      private ClassABuilder() {
+
+      }
+
+      public ClassABuilder withFirstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+      }
+      public ClassABuilder withLastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+      }
+      public ClassABuilder withAge(Integer age) {
+        this.age = age;
+        return this;
+      }
+      public ClassABuilder withVehicles(List<ClassB> vehicles) {
+        this.vehicles = vehicles;
+        return this;
+      }
+      public ClassABuilder withKids(List<ClassC> kids) {
+        this.kids = kids;
+        return this;
+      }
+      public ClassABuilder withSpaceShips(List<ClassE> spaceShips) {
+        this.spaceShips = spaceShips;
+        return this;
+      }
+
+      public ClassA build() {
+        return new ClassA(this);
+      }
+    }
   }
 
   static class ClassB {
     @AuditKey
     private String key;
     private String displayName;
+
+    public ClassB() {
+
+    }
+
+    private ClassB(ClassBBuilder builder) {
+      this.key = builder.key;
+      this.displayName = builder.displayName;
+    }
 
     public String getKey() {
       return key;
@@ -426,6 +550,32 @@ class R4_DiffToolWithObjectsInListsTest {
     public void setDisplayName(String displayName) {
       this.displayName = displayName;
     }
+
+    public static ClassBBuilder builder() {
+      return new ClassBBuilder();
+    }
+
+    public static class ClassBBuilder {
+      private String key;
+      private String displayName;
+
+      private ClassBBuilder() {
+
+      }
+
+      public ClassBBuilder withKey(String key) {
+        this.key = key;
+        return this;
+      }
+      public ClassBBuilder withDisplayName(String displayName) {
+        this.displayName = displayName;
+        return this;
+      }
+
+      public ClassB build() {
+        return new ClassB(this);
+      }
+    }
   }
 
   static class ClassC {
@@ -433,6 +583,16 @@ class R4_DiffToolWithObjectsInListsTest {
     private Integer age;
     private String name;
     private List<ClassD> favoriteSubjects;
+
+    public ClassC() {
+
+    }
+    private ClassC(ClassCBuilder builder) {
+      this.id = builder.id;
+      this.age = builder.age;
+      this.name = builder.name;
+      this.favoriteSubjects = builder.favoriteSubjects;
+    }
 
     public Long getId() {
       return id;
@@ -464,6 +624,42 @@ class R4_DiffToolWithObjectsInListsTest {
 
     public void setFavoriteSubjects(List<ClassD> favoriteSubjects) {
       this.favoriteSubjects = favoriteSubjects;
+    }
+
+    public static ClassCBuilder builder() {
+      return new ClassCBuilder();
+    }
+
+    public static class ClassCBuilder {
+      private Long id;
+      private Integer age;
+      private String name;
+      private List<ClassD> favoriteSubjects;
+
+      private ClassCBuilder() {
+
+      }
+
+      public ClassCBuilder withId(Long id) {
+        this.id = id;
+        return this;
+      }
+      public ClassCBuilder withAge(Integer age) {
+        this.age = age;
+        return this;
+      }
+      public ClassCBuilder withName(String name) {
+        this.name = name;
+        return this;
+      }
+      public ClassCBuilder withFavoriteSubjects(List<ClassD> favoriteSubjects) {
+        this.favoriteSubjects = favoriteSubjects;
+        return this;
+      }
+
+      public ClassC build() {
+        return new ClassC(this);
+      }
     }
   }
 

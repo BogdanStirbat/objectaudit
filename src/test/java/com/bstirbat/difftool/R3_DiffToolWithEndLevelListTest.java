@@ -9,17 +9,19 @@ class R3_DiffToolWithEndLevelListTest {
 
   @Test
   void detectFieldChange() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setServices(List.of("Interior/Exterior wash"));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Interior/Exterior wash"))
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setServices(List.of("Oil change"));
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Oil change"))
+        .build();
 
     ListUpdate expectedChange = new ListUpdate("services", List.of("Oil change"), List.of("Interior/Exterior wash"));
     assertListsEquals(DiffTool.diff(previous, current), List.of(expectedChange));
@@ -27,17 +29,19 @@ class R3_DiffToolWithEndLevelListTest {
 
   @Test
   void detectFieldChange_whenFieldWasAdded() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setServices(List.of());
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of())
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setServices(List.of("Oil change"));
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Oil change"))
+        .build();
 
     ListUpdate expectedChange = new ListUpdate("services", List.of("Oil change"), List.of());
     assertListsEquals(DiffTool.diff(previous, current), List.of(expectedChange));
@@ -45,17 +49,19 @@ class R3_DiffToolWithEndLevelListTest {
 
   @Test
   void detectFieldChange_whenFieldWasRemoved() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setServices(List.of("Interior/Exterior wash"));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Interior/Exterior wash"))
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setServices(List.of());
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of())
+        .build();
 
     ListUpdate expectedChange = new ListUpdate("services", List.of(), List.of("Interior/Exterior wash"));
     assertListsEquals(DiffTool.diff(previous, current), List.of(expectedChange));
@@ -63,34 +69,38 @@ class R3_DiffToolWithEndLevelListTest {
 
   @Test
   void detectFieldChange_whenNoChanges() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setServices(List.of("Interior/Exterior wash"));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Interior/Exterior wash"))
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setServices(List.of("Interior/Exterior wash"));
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Interior/Exterior wash"))
+        .build();
 
     assertListsEquals(DiffTool.diff(previous, current), List.of());
   }
 
   @Test
   void detectFieldChange_whenMultipleElementsChanged() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setServices(List.of("Wash", "Clean", "Protect"));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Wash", "Clean", "Protect"))
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setServices(List.of("Wash", "Clean", "Drive"));
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Wash", "Clean", "Drive"))
+        .build();
 
     ListUpdate expectedChange = new ListUpdate("services", List.of("Drive"), List.of("Protect"));
     assertListsEquals(DiffTool.diff(previous, current), List.of(expectedChange));
@@ -98,11 +108,12 @@ class R3_DiffToolWithEndLevelListTest {
 
   @Test
   void detectFieldChange_whenCurrentObjectIsNull() throws Exception {
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setServices(List.of("Wash", "Clean", "Protect"));
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Wash", "Clean", "Protect"))
+        .build();
 
     ListUpdate expectedChange1 = new ListUpdate("services", null, List.of("Wash", "Clean", "Protect"));
     PropertyUpdate expectedChange2 = new PropertyUpdate("firstName", "James", null);
@@ -114,11 +125,12 @@ class R3_DiffToolWithEndLevelListTest {
 
   @Test
   void detectFieldChange_whenPreviousObjectIsNull() throws Exception {
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setServices(List.of("Wash", "Clean", "Protect"));
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Wash", "Clean", "Protect"))
+        .build();
 
     ListUpdate expectedChange1 = new ListUpdate("services", List.of("Wash", "Clean", "Protect"), null);
     PropertyUpdate expectedChange2 = new PropertyUpdate("firstName", null, "James");
@@ -130,27 +142,32 @@ class R3_DiffToolWithEndLevelListTest {
 
   @Test
   void detectFieldChange_whenDeepLevelChange() throws Exception {
-    ClassB previousCar = new ClassB();
-    previousCar.setName("Ford");
-    previousCar.setAccessories(List.of("wheel", "seat"));
+    ClassB previousCar = ClassB.builder()
+        .withName("Ford")
+        .withAccessories(List.of("wheel", "seat"))
+        .build();
 
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setServices(List.of("Oil change"));
-    previous.setCar(previousCar);
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Oil change"))
+        .withCar(previousCar)
+        .build();
 
-    ClassB currentCar = new ClassB();
-    currentCar.setName("Mercedes");
-    currentCar.setAccessories(List.of("joystick", "seat", "tv"));
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setServices(List.of("Oil change"));
-    current.setCar(currentCar);
+    ClassB currentCar = ClassB.builder()
+        .withName("Mercedes")
+        .withAccessories(List.of("joystick", "seat", "tv"))
+        .build();
+
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Oil change"))
+        .withCar(currentCar)
+        .build();
 
     ListUpdate expectedChange1 = new ListUpdate("car.accessories", List.of("joystick", "tv"), List.of("wheel"));
     PropertyUpdate expectedChange2 = new PropertyUpdate("car.name", "Ford", "Mercedes");
@@ -160,16 +177,18 @@ class R3_DiffToolWithEndLevelListTest {
 
   @Test
   void detectFieldChange_whenDeepLevelChange_andCurrentObjectIsNull() throws Exception {
-    ClassB previousCar = new ClassB();
-    previousCar.setName("Ford");
-    previousCar.setAccessories(List.of("wheel", "seat"));
+    ClassB previousCar = ClassB.builder()
+        .withName("Ford")
+        .withAccessories(List.of("wheel", "seat"))
+        .build();
 
-    ClassA previous = new ClassA();
-    previous.setFirstName("James");
-    previous.setLastName("Last");
-    previous.setAge(25);
-    previous.setServices(List.of("Oil change"));
-    previous.setCar(previousCar);
+    ClassA previous = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Oil change"))
+        .withCar(previousCar)
+        .build();
 
     ListUpdate expectedChange1 = new ListUpdate("car.accessories", null, List.of("wheel", "seat"));
     ListUpdate expectedChange2 = new ListUpdate("services", null, List.of("Oil change"));
@@ -186,16 +205,18 @@ class R3_DiffToolWithEndLevelListTest {
 
   @Test
   void detectFieldChange_whenDeepLevelChange_andPreviousObjectIsNull() throws Exception {
-    ClassB currentCar = new ClassB();
-    currentCar.setName("Mercedes");
-    currentCar.setAccessories(List.of("joystick", "seat", "tv"));
+    ClassB currentCar = ClassB.builder()
+        .withName("Mercedes")
+        .withAccessories(List.of("joystick", "seat", "tv"))
+        .build();
 
-    ClassA current = new ClassA();
-    current.setFirstName("James");
-    current.setLastName("Last");
-    current.setAge(25);
-    current.setServices(List.of("Oil change"));
-    current.setCar(currentCar);
+    ClassA current = ClassA.builder()
+        .withFirstName("James")
+        .withLastName("Last")
+        .withAge(25)
+        .withServices(List.of("Oil change"))
+        .withCar(currentCar)
+        .build();
 
     ListUpdate expectedChange1 = new ListUpdate("car.accessories", List.of("joystick", "seat", "tv"), null);
     ListUpdate expectedChange2 = new ListUpdate("services", List.of("Oil change"), null);
@@ -256,11 +277,73 @@ class R3_DiffToolWithEndLevelListTest {
     public void setCar(ClassB car) {
       this.car = car;
     }
+
+    public ClassA() {
+
+    }
+
+    private ClassA(ClassABuilder builder) {
+      this.firstName = builder.firstName;
+      this.lastName = builder.lastName;
+      this.age = builder.age;
+      this.services = builder.services;
+      this.car = builder.car;
+    }
+
+    public static ClassABuilder builder() {
+      return new ClassABuilder();
+    }
+
+    public static class ClassABuilder {
+      private String firstName;
+      private String lastName;
+      private Integer age;
+      private List<String> services;
+      private ClassB car;
+
+      private ClassABuilder() {
+
+      }
+
+      public ClassABuilder withFirstName(String firstName) {
+        this.firstName = firstName;
+        return this;
+      }
+      public ClassABuilder withLastName(String lastName) {
+        this.lastName = lastName;
+        return this;
+      }
+      public ClassABuilder withAge(Integer age) {
+        this.age = age;
+        return this;
+      }
+      public ClassABuilder withServices(List<String> services) {
+        this.services = services;
+        return this;
+      }
+      public ClassABuilder withCar(ClassB car) {
+        this.car = car;
+        return this;
+      }
+
+      public ClassA build() {
+        return new ClassA(this);
+      }
+    }
   }
 
   static class ClassB {
     private String name;
     private List<String> accessories;
+
+    public ClassB() {
+
+    }
+
+    private ClassB(ClassBBuilder builder) {
+      this.name = builder.name;
+      this.accessories = builder.accessories;
+    }
 
     public String getName() {
       return name;
@@ -276,6 +359,32 @@ class R3_DiffToolWithEndLevelListTest {
 
     public void setAccessories(List<String> accessories) {
       this.accessories = accessories;
+    }
+
+    public static ClassBBuilder builder() {
+      return new ClassBBuilder();
+    }
+
+    public static class ClassBBuilder {
+      private String name;
+      private List<String> accessories;
+
+      private ClassBBuilder() {
+
+      }
+
+      public ClassBBuilder withName(String name) {
+        this.name = name;
+        return this;
+      }
+      public ClassBBuilder withAccessories(List<String> accessories) {
+        this.accessories = accessories;
+        return this;
+      }
+
+      public ClassB build() {
+        return new ClassB(this);
+      }
     }
   }
 }
