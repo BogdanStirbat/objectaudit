@@ -123,9 +123,7 @@ public class DiffTool {
     }
 
     if (isCollection(current)) {
-      List<ChangeType> result = new ArrayList<>();
-      addAllObjectChanges(result, property, (Collection<Object>) previous, (Collection<Object>) current);
-      return result;
+      return collectionOfObjectsChanges((Collection<Object>) previous, (Collection<Object>) current, property);
     }
 
     return appendPrefix(property + ".", diff(previous, current));
@@ -152,8 +150,9 @@ public class DiffTool {
     return List.of(new ListUpdate(property, added, removed));
   }
 
-  private static void addAllObjectChanges(List<ChangeType> result, String property, Collection<Object> previous,
-      Collection<Object> current) throws IllegalAccessException {
+  private static List<ChangeType> collectionOfObjectsChanges(Collection<Object> previous, Collection<Object> current, String property)
+      throws IllegalAccessException {
+    List<ChangeType> result = new ArrayList<>();
     Collection<Object> previousListItems = previous;
     Collection<Object> currentListItems = current;
 
@@ -195,6 +194,8 @@ public class DiffTool {
         }
       }
     }
+
+    return result;
   }
 
   private static List<ChangeType> appendPrefix(String prefix, List<ChangeType> changeTypes) {
