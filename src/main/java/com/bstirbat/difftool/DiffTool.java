@@ -95,12 +95,24 @@ public class DiffTool {
     }
 
     if (isCollection(current)) {
-      List<ChangeType> result = new ArrayList<>();
-      addAllAddedCollectionItems(result, property, (Collection<Object>) current);
-      return result;
+      return detectAddCollectionChanges((Collection<Object>) current, property);
     }
 
     return appendPrefix(property + ".", diff(null, current));
+  }
+
+  private static List<ChangeType> detectAddCollectionChanges(Collection<Object> current, String property)
+      throws IllegalAccessException {
+    Collection<Object> currentListItems = current;
+    List<ChangeType> result = new ArrayList<>();
+
+    for (Object currentListItem: currentListItems) {
+      String key = obtainKey(currentListItem);
+      String prefix = String.format("%s[%s].", property, key);
+      result.addAll(appendPrefix(prefix, diff(null, currentListItem)));
+    }
+
+    return result;
   }
 
   private static List<ChangeType> detectUpdateObjectChanges(Object previous, Object current, String property) throws IllegalAccessException {
@@ -188,17 +200,6 @@ public class DiffTool {
     }
 
     result.add(new ListUpdate(property, added, removed));
-  }
-
-  private static void addAllAddedCollectionItems(List<ChangeType> result, String property, Collection<Object> current)
-      throws IllegalAccessException {
-    Collection<Object> currentListItems = current;
-
-    for (Object currentListItem: currentListItems) {
-      String key = obtainKey(currentListItem);
-      String prefix = String.format("%s[%s].", property, key);
-      result.addAll(appendPrefix(prefix, diff(null, currentListItem)));
-    }
   }
 
   private static List<ChangeType> appendPrefix(String prefix, List<ChangeType> changeTypes) {
