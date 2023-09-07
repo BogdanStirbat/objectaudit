@@ -65,12 +65,24 @@ public class DiffTool {
     }
 
     if (isCollection(previous)) {
-      List<ChangeType> result = new ArrayList<>();
-      addAllRemovedCollectionItems(result, property, (Collection<Object>) previous);
-      return result;
+      return detectDeleteCollectionChanges((Collection<Object>) previous, property);
     }
 
     return appendPrefix(property + ".", diff(previous, null));
+  }
+
+  private static List<ChangeType> detectDeleteCollectionChanges(Collection<Object> previous, String property)
+      throws IllegalAccessException {
+    Collection<Object> previousListItems = previous;
+    List<ChangeType> result = new ArrayList<>();
+
+    for (Object previousListItem: previousListItems) {
+      String key = obtainKey(previousListItem);
+      String prefix = String.format("%s[%s].", property, key);
+      result.addAll(appendPrefix(prefix, diff(previousListItem, null)));
+    }
+
+    return result;
   }
 
   private static List<ChangeType> detectAddObjectChanges(Object current, String property) throws IllegalAccessException {
@@ -186,17 +198,6 @@ public class DiffTool {
       String key = obtainKey(currentListItem);
       String prefix = String.format("%s[%s].", property, key);
       result.addAll(appendPrefix(prefix, diff(null, currentListItem)));
-    }
-  }
-
-  private static void addAllRemovedCollectionItems(List<ChangeType> result, String property, Collection<Object> previous)
-      throws IllegalAccessException {
-    Collection<Object> previousListItems = previous;
-
-    for (Object previousListItem: previousListItems) {
-      String key = obtainKey(previousListItem);
-      String prefix = String.format("%s[%s].", property, key);
-      result.addAll(appendPrefix(prefix, diff(previousListItem, null)));
     }
   }
 
