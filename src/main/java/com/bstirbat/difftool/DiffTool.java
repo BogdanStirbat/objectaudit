@@ -73,10 +73,9 @@ public class DiffTool {
 
   private static List<ChangeType> detectDeleteCollectionChanges(Collection<Object> previous, String property)
       throws IllegalAccessException {
-    Collection<Object> previousListItems = previous;
     List<ChangeType> result = new ArrayList<>();
 
-    for (Object previousListItem: previousListItems) {
+    for (Object previousListItem: previous) {
       String key = obtainKey(previousListItem);
       String prefix = String.format("%s[%s].", property, key);
       result.addAll(appendPrefix(prefix, diff(previousListItem, null)));
@@ -103,10 +102,9 @@ public class DiffTool {
 
   private static List<ChangeType> detectAddCollectionChanges(Collection<Object> current, String property)
       throws IllegalAccessException {
-    Collection<Object> currentListItems = current;
     List<ChangeType> result = new ArrayList<>();
 
-    for (Object currentListItem: currentListItems) {
+    for (Object currentListItem: current) {
       String key = obtainKey(currentListItem);
       String prefix = String.format("%s[%s].", property, key);
       result.addAll(appendPrefix(prefix, diff(null, currentListItem)));
@@ -121,9 +119,7 @@ public class DiffTool {
     }
 
     if (isCollectionOfEndLevelObjects(previous) || isCollectionOfEndLevelObjects(current)) {
-      List<ChangeType> result = new ArrayList<>();
-      addAllCollectionItemsChanges(result, property, (Collection<Object>) previous, (Collection<Object>) current);
-      return result;
+      return collectionOfEndLevelObjectsChanges((Collection<Object>) previous, (Collection<Object>) current, property);
     }
 
     if (isCollection(current)) {
@@ -133,6 +129,27 @@ public class DiffTool {
     }
 
     return appendPrefix(property + ".", diff(previous, current));
+  }
+
+  private static List<ChangeType> collectionOfEndLevelObjectsChanges(Collection<Object> previous, Collection<Object> current, String property) {
+    List<String> previousStrings = toListOfStrings(previous);
+    List<String> currentStrings = toListOfStrings(current);
+
+    List<String> added = new ArrayList<>();
+    for (String currentString: currentStrings) {
+      if (!previousStrings.contains(currentString)) {
+        added.add(currentString);
+      }
+    }
+
+    List<String> removed = new ArrayList<>();
+    for (String previousString: previousStrings) {
+      if (!currentStrings.contains(previousString)) {
+        removed.add(previousString);
+      }
+    }
+
+    return List.of(new ListUpdate(property, added, removed));
   }
 
   private static void addAllObjectChanges(List<ChangeType> result, String property, Collection<Object> previous,
@@ -178,28 +195,6 @@ public class DiffTool {
         }
       }
     }
-  }
-
-  private static void addAllCollectionItemsChanges(List<ChangeType> result, String property, Collection<Object> previous,
-      Collection<Object> current) {
-    List<String> previousStrings = toListOfStrings(previous);
-    List<String> currentStrings = toListOfStrings(current);
-
-    List<String> added = new ArrayList<>();
-    for (String currentString: currentStrings) {
-      if (!previousStrings.contains(currentString)) {
-        added.add(currentString);
-      }
-    }
-
-    List<String> removed = new ArrayList<>();
-    for (String previousString: previousStrings) {
-      if (!currentStrings.contains(previousString)) {
-        removed.add(previousString);
-      }
-    }
-
-    result.add(new ListUpdate(property, added, removed));
   }
 
   private static List<ChangeType> appendPrefix(String prefix, List<ChangeType> changeTypes) {
