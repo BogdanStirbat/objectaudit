@@ -20,12 +20,11 @@ public class DiffTool {
   }
 
   public static <T> List<ChangeType> diff(T previousValue, T currentValue) throws IllegalAccessException {
-    List<ChangeType> result = new ArrayList<>();
-
     if (previousValue == null && currentValue == null) {
-      return result;
+      return new ArrayList<>();
     }
 
+    List<ChangeType> result = new ArrayList<>();
     Class<?> clazz = previousValue != null? previousValue.getClass(): currentValue.getClass();
     for (Field field: clazz.getDeclaredFields()) {
       field.setAccessible(true);
@@ -39,22 +38,22 @@ public class DiffTool {
       }
 
       if (previous != null && current == null) {
-        result.addAll(deleteObjectChanges(previous, property));
+        result.addAll(deletedObjectChanges(previous, property));
       }
 
       if (previous == null && current != null) {
-        result.addAll(addObjectChanges(current, property));
+        result.addAll(addedObjectChanges(current, property));
       }
 
       if (previous != null && current != null && !previous.equals(current)) {
-        result.addAll(updateObjectChanges(previous, current, property));
+        result.addAll(updatedObjectChanges(previous, current, property));
       }
     }
 
     return result;
   }
 
-  private static List<ChangeType> deleteObjectChanges(Object previous, String property) throws IllegalAccessException {
+  private static List<ChangeType> deletedObjectChanges(Object previous, String property) throws IllegalAccessException {
     if (isEndLevelObject(previous)) {
       return List.of(new PropertyUpdate(property, previous.toString(), null));
     }
@@ -64,13 +63,13 @@ public class DiffTool {
     }
 
     if (isCollection(previous)) {
-      return deleteCollectionChanges((Collection<Object>) previous, property);
+      return deletedCollectionChanges((Collection<Object>) previous, property);
     }
 
     return appendPrefix(property + ".", diff(previous, null));
   }
 
-  private static List<ChangeType> deleteCollectionChanges(Collection<Object> previous, String property)
+  private static List<ChangeType> deletedCollectionChanges(Collection<Object> previous, String property)
       throws IllegalAccessException {
     List<ChangeType> result = new ArrayList<>();
 
@@ -83,7 +82,7 @@ public class DiffTool {
     return result;
   }
 
-  private static List<ChangeType> addObjectChanges(Object current, String property) throws IllegalAccessException {
+  private static List<ChangeType> addedObjectChanges(Object current, String property) throws IllegalAccessException {
     if (isEndLevelObject(current)) {
       return List.of(new PropertyUpdate(property, null, current.toString()));
     }
@@ -93,13 +92,13 @@ public class DiffTool {
     }
 
     if (isCollection(current)) {
-      return addCollectionChanges((Collection<Object>) current, property);
+      return addedCollectionChanges((Collection<Object>) current, property);
     }
 
     return appendPrefix(property + ".", diff(null, current));
   }
 
-  private static List<ChangeType> addCollectionChanges(Collection<Object> current, String property)
+  private static List<ChangeType> addedCollectionChanges(Collection<Object> current, String property)
       throws IllegalAccessException {
     List<ChangeType> result = new ArrayList<>();
 
@@ -112,7 +111,7 @@ public class DiffTool {
     return result;
   }
 
-  private static List<ChangeType> updateObjectChanges(Object previous, Object current, String property) throws IllegalAccessException {
+  private static List<ChangeType> updatedObjectChanges(Object previous, Object current, String property) throws IllegalAccessException {
     if (isEndLevelObject(previous)) {
       return List.of(new PropertyUpdate(property, previous.toString(), current.toString()));
     }
