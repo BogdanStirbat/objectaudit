@@ -39,23 +39,22 @@ public class DiffTool {
       }
 
       if (previous != null && current == null) {
-        result.addAll(detectDeleteObjectChanges(previous, property));
+        result.addAll(deleteObjectChanges(previous, property));
       }
 
       if (previous == null && current != null) {
-        result.addAll(detectAddObjectChanges(current, property));
+        result.addAll(addObjectChanges(current, property));
       }
 
       if (previous != null && current != null && !previous.equals(current)) {
-        result.addAll(detectUpdateObjectChanges(previous, current, property));
+        result.addAll(updateObjectChanges(previous, current, property));
       }
     }
 
     return result;
   }
 
-  private static List<ChangeType> detectDeleteObjectChanges(Object previous, String property) throws IllegalAccessException {
-
+  private static List<ChangeType> deleteObjectChanges(Object previous, String property) throws IllegalAccessException {
     if (isEndLevelObject(previous)) {
       return List.of(new PropertyUpdate(property, previous.toString(), null));
     }
@@ -65,13 +64,13 @@ public class DiffTool {
     }
 
     if (isCollection(previous)) {
-      return detectDeleteCollectionChanges((Collection<Object>) previous, property);
+      return deleteCollectionChanges((Collection<Object>) previous, property);
     }
 
     return appendPrefix(property + ".", diff(previous, null));
   }
 
-  private static List<ChangeType> detectDeleteCollectionChanges(Collection<Object> previous, String property)
+  private static List<ChangeType> deleteCollectionChanges(Collection<Object> previous, String property)
       throws IllegalAccessException {
     List<ChangeType> result = new ArrayList<>();
 
@@ -84,7 +83,7 @@ public class DiffTool {
     return result;
   }
 
-  private static List<ChangeType> detectAddObjectChanges(Object current, String property) throws IllegalAccessException {
+  private static List<ChangeType> addObjectChanges(Object current, String property) throws IllegalAccessException {
     if (isEndLevelObject(current)) {
       return List.of(new PropertyUpdate(property, null, current.toString()));
     }
@@ -94,13 +93,13 @@ public class DiffTool {
     }
 
     if (isCollection(current)) {
-      return detectAddCollectionChanges((Collection<Object>) current, property);
+      return addCollectionChanges((Collection<Object>) current, property);
     }
 
     return appendPrefix(property + ".", diff(null, current));
   }
 
-  private static List<ChangeType> detectAddCollectionChanges(Collection<Object> current, String property)
+  private static List<ChangeType> addCollectionChanges(Collection<Object> current, String property)
       throws IllegalAccessException {
     List<ChangeType> result = new ArrayList<>();
 
@@ -113,7 +112,7 @@ public class DiffTool {
     return result;
   }
 
-  private static List<ChangeType> detectUpdateObjectChanges(Object previous, Object current, String property) throws IllegalAccessException {
+  private static List<ChangeType> updateObjectChanges(Object previous, Object current, String property) throws IllegalAccessException {
     if (isEndLevelObject(previous)) {
       return List.of(new PropertyUpdate(property, previous.toString(), current.toString()));
     }
@@ -153,17 +152,15 @@ public class DiffTool {
   private static List<ChangeType> collectionOfObjectsChanges(Collection<Object> previous, Collection<Object> current, String property)
       throws IllegalAccessException {
     List<ChangeType> result = new ArrayList<>();
-    Collection<Object> previousListItems = previous;
-    Collection<Object> currentListItems = current;
 
     Map<String, Object> previousObjects = new HashMap<>();
-    for (Object previousListItem: previousListItems) {
+    for (Object previousListItem: previous) {
       String key = obtainKey(previousListItem);
       previousObjects.put(key, previousListItem);
     }
 
     Map<String, Object> currentObjects = new HashMap<>();
-    for (Object currentListItem: currentListItems) {
+    for (Object currentListItem: current) {
       String key = obtainKey(currentListItem);
       currentObjects.put(key, currentListItem);
     }
