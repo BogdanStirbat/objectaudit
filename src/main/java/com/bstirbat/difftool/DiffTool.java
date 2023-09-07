@@ -50,14 +50,7 @@ public class DiffTool {
         }
 
         if (isCollection(previous)) {
-          Collection<Object> previousListItems = (Collection<Object>) previous;
-
-          for (Object previousListItem: previousListItems) {
-
-            String key = obtainKey(previousListItem);
-            String prefix = String.format("%s[%s].", property, key);
-            result.addAll(appendPrefix(prefix, diff(previousListItem, null)));
-          }
+          addAllRemovedCollectionItems(result, property, (Collection<Object>) previous);
           continue;
         }
 
@@ -71,19 +64,12 @@ public class DiffTool {
         }
 
         if (isCollectionOfEndLevelObjects(current)) {
-
           result.add(new ListUpdate(property, toListOfStrings((Collection<Object>) current), null));
           continue;
         }
 
         if (isCollection(current)) {
-          Collection<Object> currentListItems = (Collection<Object>) current;
-
-          for (Object currentListItem: currentListItems) {
-            String key = obtainKey(currentListItem);
-            String prefix = String.format("%s[%s].", property, key);
-            result.addAll(appendPrefix(prefix, diff(null, currentListItem)));
-          }
+          addAllAddedCollectionItems(result, property, (Collection<Object>) current);
           continue;
         }
 
@@ -97,70 +83,12 @@ public class DiffTool {
         }
 
         if (isCollectionOfEndLevelObjects(previous) || isCollectionOfEndLevelObjects(current)) {
-          List<String> previousStrings = toListOfStrings((Collection<Object>) previous);
-          List<String> currentStrings = toListOfStrings((Collection<Object>) current);
-
-          List<String> added = new ArrayList<>();
-          for (String currentString: currentStrings) {
-            if (!previousStrings.contains(currentString)) {
-              added.add(currentString);
-            }
-          }
-
-          List<String> removed = new ArrayList<>();
-          for (String previousString: previousStrings) {
-            if (!currentStrings.contains(previousString)) {
-              removed.add(previousString);
-            }
-          }
-
-          result.add(new ListUpdate(property, added, removed));
+          addAllCollectionItemsChanges(result, property, (Collection<Object>) previous, (Collection<Object>) current);
           continue;
         }
 
         if (isCollection(current)) {
-          Collection<Object> previousListItems = (Collection<Object>) previous;
-          Collection<Object> currentListItems = (Collection<Object>) current;
-
-          Map<String, Object> previousObjects = new HashMap<>();
-          for (Object previousListItem: previousListItems) {
-            String key = obtainKey(previousListItem);
-            previousObjects.put(key, previousListItem);
-          }
-
-          Map<String, Object> currentObjects = new HashMap<>();
-          for (Object currentListItem: currentListItems) {
-            String key = obtainKey(currentListItem);
-            currentObjects.put(key, currentListItem);
-          }
-
-          for (String previousKey : previousObjects.keySet()) {
-            if (!currentObjects.containsKey(previousKey)) {
-              Object previousListItem = previousObjects.get(previousKey);
-              String prefix = String.format("%s[%s].", property, previousKey);
-              result.addAll(appendPrefix(prefix, diff(previousListItem, null)));
-            }
-          }
-
-          for (String currentKey: currentObjects.keySet()) {
-            if (!previousObjects.containsKey(currentKey)) {
-              Object currentListItem = currentObjects.get(currentKey);
-              String prefix = String.format("%s[%s].", property, currentKey);
-              result.addAll(appendPrefix(prefix, diff(null, currentListItem)));
-            }
-          }
-
-          for (String key : previousObjects.keySet()) {
-            if (currentObjects.containsKey(key)) {
-              Object previousListItem = previousObjects.get(key);
-              Object currentListItem = currentObjects.get(key);
-              if (!previousListItem.equals(currentListItem)) {
-                String prefix = String.format("%s[%s].", property, key);
-                result.addAll(appendPrefix(prefix, diff(previousListItem, currentListItem)));
-              }
-            }
-          }
-
+          addAllObjectChanges(result, property, (Collection<Object>) previous, (Collection<Object>) current);
           continue;
         }
 
@@ -169,6 +97,95 @@ public class DiffTool {
     }
 
     return result;
+  }
+
+  private static void addAllObjectChanges(List<ChangeType> result, String property, Collection<Object> previous,
+      Collection<Object> current) throws IllegalAccessException {
+    Collection<Object> previousListItems = previous;
+    Collection<Object> currentListItems = current;
+
+    Map<String, Object> previousObjects = new HashMap<>();
+    for (Object previousListItem: previousListItems) {
+      String key = obtainKey(previousListItem);
+      previousObjects.put(key, previousListItem);
+    }
+
+    Map<String, Object> currentObjects = new HashMap<>();
+    for (Object currentListItem: currentListItems) {
+      String key = obtainKey(currentListItem);
+      currentObjects.put(key, currentListItem);
+    }
+
+    for (String previousKey : previousObjects.keySet()) {
+      if (!currentObjects.containsKey(previousKey)) {
+        Object previousListItem = previousObjects.get(previousKey);
+        String prefix = String.format("%s[%s].", property, previousKey);
+        result.addAll(appendPrefix(prefix, diff(previousListItem, null)));
+      }
+    }
+
+    for (String currentKey: currentObjects.keySet()) {
+      if (!previousObjects.containsKey(currentKey)) {
+        Object currentListItem = currentObjects.get(currentKey);
+        String prefix = String.format("%s[%s].", property, currentKey);
+        result.addAll(appendPrefix(prefix, diff(null, currentListItem)));
+      }
+    }
+
+    for (String key : previousObjects.keySet()) {
+      if (currentObjects.containsKey(key)) {
+        Object previousListItem = previousObjects.get(key);
+        Object currentListItem = currentObjects.get(key);
+        if (!previousListItem.equals(currentListItem)) {
+          String prefix = String.format("%s[%s].", property, key);
+          result.addAll(appendPrefix(prefix, diff(previousListItem, currentListItem)));
+        }
+      }
+    }
+  }
+
+  private static void addAllCollectionItemsChanges(List<ChangeType> result, String property, Collection<Object> previous,
+      Collection<Object> current) {
+    List<String> previousStrings = toListOfStrings(previous);
+    List<String> currentStrings = toListOfStrings(current);
+
+    List<String> added = new ArrayList<>();
+    for (String currentString: currentStrings) {
+      if (!previousStrings.contains(currentString)) {
+        added.add(currentString);
+      }
+    }
+
+    List<String> removed = new ArrayList<>();
+    for (String previousString: previousStrings) {
+      if (!currentStrings.contains(previousString)) {
+        removed.add(previousString);
+      }
+    }
+
+    result.add(new ListUpdate(property, added, removed));
+  }
+
+  private static void addAllAddedCollectionItems(List<ChangeType> result, String property, Collection<Object> current)
+      throws IllegalAccessException {
+    Collection<Object> currentListItems = current;
+
+    for (Object currentListItem: currentListItems) {
+      String key = obtainKey(currentListItem);
+      String prefix = String.format("%s[%s].", property, key);
+      result.addAll(appendPrefix(prefix, diff(null, currentListItem)));
+    }
+  }
+
+  private static void addAllRemovedCollectionItems(List<ChangeType> result, String property, Collection<Object> previous)
+      throws IllegalAccessException {
+    Collection<Object> previousListItems = previous;
+
+    for (Object previousListItem: previousListItems) {
+      String key = obtainKey(previousListItem);
+      String prefix = String.format("%s[%s].", property, key);
+      result.addAll(appendPrefix(prefix, diff(previousListItem, null)));
+    }
   }
 
   private static List<ChangeType> appendPrefix(String prefix, List<ChangeType> changeTypes) {
