@@ -1,5 +1,6 @@
 package com.bstirbat.difftool;
 
+import static com.bstirbat.difftool.utils.CollectionUtils.toListOfStrings;
 import static com.bstirbat.difftool.utils.ObjectUtils.isCollection;
 import static com.bstirbat.difftool.utils.ObjectUtils.isCollectionOfEndLevelObjects;
 import static com.bstirbat.difftool.utils.ObjectUtils.isEndLevelObject;
@@ -44,12 +45,7 @@ public class DiffTool {
         }
 
         if (isCollectionOfEndLevelObjects(previous)) {
-          Collection<Object> previousListItems = (Collection<Object>) previous;
-          List<String> removedValues = previousListItems.stream()
-              .map(Object::toString)
-              .toList();
-
-          result.add(new ListUpdate(property, null, removedValues));
+          result.add(new ListUpdate(property, null, toListOfStrings((Collection<Object>) previous)));
           continue;
         }
 
@@ -75,12 +71,8 @@ public class DiffTool {
         }
 
         if (isCollectionOfEndLevelObjects(current)) {
-          Collection<Object> currentListItems = (Collection<Object>) current;
-          List<String> addedValues = currentListItems.stream()
-              .map(Object::toString)
-              .toList();
 
-          result.add(new ListUpdate(property, addedValues, null));
+          result.add(new ListUpdate(property, toListOfStrings((Collection<Object>) current), null));
           continue;
         }
 
@@ -105,16 +97,8 @@ public class DiffTool {
         }
 
         if (isCollectionOfEndLevelObjects(previous) || isCollectionOfEndLevelObjects(current)) {
-          Collection<Object> previousListItems = (Collection<Object>) previous;
-          Collection<Object> currentListItems = (Collection<Object>) current;
-
-          List<String> previousStrings = previousListItems.stream()
-              .map(Object::toString)
-              .toList();
-
-          List<String> currentStrings = currentListItems.stream()
-              .map(Object::toString)
-              .toList();
+          List<String> previousStrings = toListOfStrings((Collection<Object>) previous);
+          List<String> currentStrings = toListOfStrings((Collection<Object>) current);
 
           List<String> added = new ArrayList<>();
           for (String currentString: currentStrings) {
