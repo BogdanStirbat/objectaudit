@@ -39,64 +39,76 @@ public class DiffTool {
       }
 
       if (previous != null && current == null) {
-        if (isEndLevelObject(previous)) {
-          result.add(new PropertyUpdate(property, previous.toString(), null));
-          continue;
-        }
-
-        if (isCollectionOfEndLevelObjects(previous)) {
-          result.add(new ListUpdate(property, null, toListOfStrings((Collection<Object>) previous)));
-          continue;
-        }
-
-        if (isCollection(previous)) {
-          addAllRemovedCollectionItems(result, property, (Collection<Object>) previous);
-          continue;
-        }
-
-        result.addAll(appendPrefix(property + ".", diff(previous, null)));
+        result.addAll(detectDeleteObjectChanges(previous, property));
       }
 
       if (previous == null && current != null) {
-        if (isEndLevelObject(current)) {
-          result.add(new PropertyUpdate(property, null, current.toString()));
-          continue;
-        }
-
-        if (isCollectionOfEndLevelObjects(current)) {
-          result.add(new ListUpdate(property, toListOfStrings((Collection<Object>) current), null));
-          continue;
-        }
-
-        if (isCollection(current)) {
-          addAllAddedCollectionItems(result, property, (Collection<Object>) current);
-          continue;
-        }
-
-        result.addAll(appendPrefix(property + ".", diff(null, current)));
+        result.addAll(detectAddObjectChanges(current, property));
       }
 
       if (previous != null && current != null && !previous.equals(current)) {
-        if (isEndLevelObject(previous)) {
-          result.add(new PropertyUpdate(property, previous.toString(), current.toString()));
-          continue;
-        }
-
-        if (isCollectionOfEndLevelObjects(previous) || isCollectionOfEndLevelObjects(current)) {
-          addAllCollectionItemsChanges(result, property, (Collection<Object>) previous, (Collection<Object>) current);
-          continue;
-        }
-
-        if (isCollection(current)) {
-          addAllObjectChanges(result, property, (Collection<Object>) previous, (Collection<Object>) current);
-          continue;
-        }
-
-        result.addAll(appendPrefix(property + ".", diff(previous, current)));
+        result.addAll(detectUpdateObjectChanges(previous, current, property));
       }
     }
 
     return result;
+  }
+
+  private static List<ChangeType> detectDeleteObjectChanges(Object previous, String property) throws IllegalAccessException {
+
+    if (isEndLevelObject(previous)) {
+      return List.of(new PropertyUpdate(property, previous.toString(), null));
+    }
+
+    if (isCollectionOfEndLevelObjects(previous)) {
+      return List.of(new ListUpdate(property, null, toListOfStrings((Collection<Object>) previous)));
+    }
+
+    if (isCollection(previous)) {
+      List<ChangeType> result = new ArrayList<>();
+      addAllRemovedCollectionItems(result, property, (Collection<Object>) previous);
+      return result;
+    }
+
+    return appendPrefix(property + ".", diff(previous, null));
+  }
+
+  private static List<ChangeType> detectAddObjectChanges(Object current, String property) throws IllegalAccessException {
+    if (isEndLevelObject(current)) {
+      return List.of(new PropertyUpdate(property, null, current.toString()));
+    }
+
+    if (isCollectionOfEndLevelObjects(current)) {
+      return List.of(new ListUpdate(property, toListOfStrings((Collection<Object>) current), null));
+    }
+
+    if (isCollection(current)) {
+      List<ChangeType> result = new ArrayList<>();
+      addAllAddedCollectionItems(result, property, (Collection<Object>) current);
+      return result;
+    }
+
+    return appendPrefix(property + ".", diff(null, current));
+  }
+
+  private static List<ChangeType> detectUpdateObjectChanges(Object previous, Object current, String property) throws IllegalAccessException {
+    if (isEndLevelObject(previous)) {
+      return List.of(new PropertyUpdate(property, previous.toString(), current.toString()));
+    }
+
+    if (isCollectionOfEndLevelObjects(previous) || isCollectionOfEndLevelObjects(current)) {
+      List<ChangeType> result = new ArrayList<>();
+      addAllCollectionItemsChanges(result, property, (Collection<Object>) previous, (Collection<Object>) current);
+      return result;
+    }
+
+    if (isCollection(current)) {
+      List<ChangeType> result = new ArrayList<>();
+      addAllObjectChanges(result, property, (Collection<Object>) previous, (Collection<Object>) current);
+      return result;
+    }
+
+    return appendPrefix(property + ".", diff(previous, current));
   }
 
   private static void addAllObjectChanges(List<ChangeType> result, String property, Collection<Object> previous,
